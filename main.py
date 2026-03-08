@@ -13,6 +13,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+torch.manual_seed(42)
+np.random.seed(42)
+
 def main() :
     sns.set_style("whitegrid")
     sns.set_context("talk")
@@ -103,8 +106,49 @@ def main() :
 
     print(metrics)
     print('\n'+"-"*80+"\n")
-    print("-"*20+"\tSMALL MODEL\t"+"-"*20)
+
+
+    # Medium Architecture model + Dropout
+    print("-"*20+"\tMEDIUM MODEL + DROPOUT\t"+"-"*20)
+
+    dropoutModel = CreditRiskANN(
+        input_size=input_size,
+        hidden_layers=[64,32],
+        dropout=0.3
+    )
+
+    criterion = nn.BCEWithLogitsLoss()
+
+    optimizer = torch.optim.Adam(dropoutModel.parameters(), lr=0.001)
+
+    train_losses_d, val_losses_d = train_model(
+        dropoutModel,
+        train_loader,
+        test_loader,
+        epochs=50,
+        criterion=criterion,
+        optimizer=optimizer
+    )
+
+    metrics = evaluate(dropoutModel, X_test, y_test)
+
+    plt.figure()
+    plt.plot(train_losses_d, label="Train Loss")
+    plt.plot(val_losses_d, label="Validation Loss")
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.title("Training vs Validation Loss - Medium + Dropout")
+
+    plt.legend()
+    plt.savefig("plots/training_curve_dropout.png")
+
+    print(metrics)
+    print('\n'+"-"*80+"\n")
+
     # Small Architecture model
+
+    print("-"*20+"\tSMALL MODEL\t"+"-"*20)
     smallModel = CreditRiskANN(
         input_size=input_size,
         hidden_layers=[32]
@@ -139,6 +183,7 @@ def main() :
     print(metrics)
     print('\n'+"-"*80+"\n")
     print("-"*20+"\tLARGE MODEL\t"+"-"*20)
+
     # Large Architecture model
     largeModel = CreditRiskANN(
         input_size=input_size,
@@ -180,14 +225,17 @@ def main() :
     best_epoch_small = np.argmin(val_losses_s)
     best_epoch_medium = np.argmin(val_losses_m)
     best_epoch_large = np.argmin(val_losses_l)
+    best_epoch_dropout = np.argmin(val_losses_d)
 
     plt.scatter(best_epoch_small, val_losses_s[best_epoch_small], color="blue")
     plt.scatter(best_epoch_medium, val_losses_m[best_epoch_medium], color="orange")
     plt.scatter(best_epoch_large, val_losses_l[best_epoch_large], color="green")
+    plt.scatter(best_epoch_dropout, val_losses_l[best_epoch_large], color="red")
 
     plt.plot(val_losses_s, label="Small model")
     plt.plot(val_losses_m, label="Medium model")
     plt.plot(val_losses_l, label="Large model")
+    plt.plot(val_losses_d, label="Medium + Dropout")
 
     plt.xlabel("Epoch")
     plt.ylabel("Validation Loss")
