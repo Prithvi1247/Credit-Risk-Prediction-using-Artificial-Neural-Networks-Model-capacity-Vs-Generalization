@@ -1,110 +1,240 @@
-Credit Risk Prediction using Artificial Neural Networks
+### Credit Risk Prediction using Artificial Neural Networks
+=======================================================
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![PyTorch](https://img.shields.io/badge/PyTorch-DeepLearning-red)
+![License](https://img.shields.io/badge/License-MIT-green)
+### A Study of Model Capacity, Overfitting, and Generalization on Tabular Financial Data
 
-Input: financial information about a person
+Overview
+--------
+
+Financial institutions need to estimate whether a borrower is likely to default on a loan.\
+This project explores how **Artificial Neural Networks behave when modeling tabular financial data**, specifically focusing on how **model capacity affects overfitting and generalization**.
+
+Instead of training a single model, I trained **multiple neural network architectures with different capacities** and analyzed their training dynamics.
+
+The goal of this experiment is to understand:
+
+-   How neural network **capacity influences memorization**
+
+-   When **overfitting begins during training**
+
+-   Which architectures generalize best on **small tabular datasets**
+
+* * * * *
+
+Problem Setup
+=============
+
+Input: financial attributes of a loan applicant\
 Output: probability of loan default
 
-binary classification problem.
+This is a **binary classification problem**:
 
-0 → safe borrower
-1 → risky borrower
+0 → Safe borrower\
+1 → Risky borrower
 
-Dataset used: German Credit Dataset
+The model learns:
 
-Goal: 
-    demonstrate understanding of neural networks
-    run experiments
-    analyze results
+P(default | financial features)
 
-Neural Network Modeling for Credit Risk Prediction: 
-An Experimental Study on Tabular Financial Data
+* * * * *
 
+Dataset
+=======
 
-Train multiple ANN architectures
-Compare their behavior
-Analyze overfitting and generalization
+Dataset used: **German Credit Dataset**
 
-# DATASET : 
-    1000 SAMPLES
-    After train/test split:
-        ~800 training samples
-    
+Key characteristics:
 
-## MEDIUM ARCHITECTURE MODEL (60 → 64 → 32 → 1)
-    6000 parameters
-- more degrees of freedom than data complexity requires.
-- The neural network begins to overfit after approximately 9 epochs, as indicated by increasing validation loss despite decreasing training loss.
+-   ~1000 total samples
 
-- model checkpoint is around epoch 9–10.
-- After that = training improves , generalization worsens
+-   ~20 original features (expanded after one-hot encoding)
 
-### Metrics 
-    accuracy  ≈ 0.795
-    precision ≈ 0.65
-    recall    ≈ 0.66
-    F1        ≈ 0.655
+-   Train/test split: **80 / 20**
 
-    recall = precision -> model is balanced
+After preprocessing:
 
-## SMALL ARCHITECTURE MODEL (60 → 32 → 1)
-    1920 parameters
-- Still more degrees of freedom than data complexity requires.
-- The neural network begins to overfit after approximately 12-13 epochs, as indicated by increasing validation loss despite decreasing training loss.
+Training samples ≈ 800\
+Test samples ≈ 200\
+Feature dimension ≈ 60
 
-- model checkpoint is around epoch 12-13.
-- After that = training improves , generalization worsens
-- [lower capacity ->> slower memorization]
+* * * * *
 
-### Metrics 
-    accuracy  ≈ 0.79
-    precision ≈ 0.64
-    recall    ≈ 0.64
-    F1        ≈ 0.644
+Training Pipeline
+=================
 
-    recall = precision -> model is balanced
+The following preprocessing steps were applied before training:
 
-## LARGE ARCHITECTURE MODEL (60 → 128 → 64 → 32 → 1)
-    18000 parameters
-- Extremely More degrees of freedom than data complexity requires.
-- The neural network begins to overfit after approximately 6 epochs, as indicated by increasing validation loss despite decreasing training loss.
+1.  One-hot encoding of categorical variables
 
-- model checkpoint is around epoch 6.
-- After that = training improves , generalization worsens
-- [Higer capacity ->> faster memorization]
+2.  Train/test split
 
-### Metrics 
-    accuracy  ≈ 0.785
-    precision ≈ 0.633
-    recall    ≈ 0.644
-    F1        ≈ 0.638
+3.  Feature standardization
 
-    recall = precision -> model is balanced
+4.  Conversion to PyTorch tensors
 
-## EXPERIMENTAL INSIGHTS
+5.  Mini-batch training using DataLoader
 
-1. 
-    small model -> slower overfitting
-    medium model -> balanced performance
-    large model -> fastest memorization
+Training configuration:
 
-    because
+Loss function  : BCEWithLogitsLoss\
+Optimizer      : Adam\
+Batch size     : 32\
+Epochs         : 50
 
-    larger networks have more parameters
-        - higher capacity
-        - easier memorization
+Evaluation metrics:
 
-2. 
-    Even though the large model had the lowest validation loss (~0.487), its final metrics are slightly worse.
+Accuracy\
+Precision\
+Recall\
+F1 Score
 
-    Because the model: overfits extremely fast
+* * * * *
 
-### UNDERSTANDING
+Neural Network Architectures
+============================
 
-Increasing neural network capacity leads to faster memorization of the training data. While the larger model achieves lower training loss, its validation performance deteriorates earlier, indicating overfitting. This suggests that moderate-capacity networks provide better generalization on small tabular datasets.
+Three architectures were trained to study the effect of model capacity.
 
+### Small Network
 
-| Model            | Architecture | Best Epoch | Accuracy | Precision | Recall |  F1   |
-| ---------------- | ------------ | ---------- | -------- | --------- | ------ | ---   |
-| Small            | [32]         | 13         | 0.8      | 0.661     | 0.661  | 0.661 |
-| Medium           | [64,32]      | 9          | 0.77     | 0.603     | 0.644  | 0.623 |
-| Large            | [128,64,32]  | 6          | 0.775    | 0.616     | 0.627  | 0.622 |
-| Medium + Dropout | [64,32]      | 12         | 0.785    | 0.633     | 0.644  | 0.639 |
+60 → 32 → 1\
+≈ 1920 parameters
+
+### Medium Network
+
+60 → 64 → 32 → 1\
+≈ 6000 parameters
+
+### Large Network
+
+60 → 128 → 64 → 32 → 1\
+≈ 18000 parameters
+
+A fourth experiment was added to test **regularization**:
+
+### Medium + Dropout
+
+60 → 64 → 32 → 1\
+Dropout = 0.3
+
+* * * * *
+
+Training Dynamics
+=================
+
+Training and validation loss curves were recorded for each architecture.
+
+Key observation:
+
+Training loss consistently decreases\
+Validation loss eventually increases
+
+This indicates **overfitting**, where the network begins memorizing training samples instead of learning general patterns.
+
+* * * * *
+
+# Training Curves
+
+### Small Architecture
+
+![Small Model Training Curve](plots/training_curve_small.png)
+
+### Medium Architecture
+
+![Medium Model Training Curve](plots/training_curve_medium.png)
+
+### Large Architecture
+
+![Large Model Training Curve](plots/training_curve_large.png)
+
+# Model Capacity vs Overfitting
+
+The figure below compares validation loss across different model capacities.
+
+![Model Capacity Comparison](plots/model_capacity_comparison.png)
+
+The large model begins overfitting earliest (~epoch 6), while the smaller model maintains stable validation performance for longer. This illustrates how increasing model capacity accelerates memorization when training on small tabular datasets.
+
+Results
+=======
+
+| Model | Architecture | Best Epoch | Accuracy | Precision | Recall | F1 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Small | [32] | 13 | 0.80 | 0.661 | 0.661 | 0.661 |
+| Medium | [64,32] | 9 | 0.77 | 0.603 | 0.644 | 0.623 |
+| Large | [128,64,32] | 6 | 0.775 | 0.616 | 0.627 | 0.622 |
+| Medium + Dropout | [64,32] | 12 | 0.785 | 0.633 | 0.644 | 0.639 |
+
+* * * * *
+
+Experimental Insights
+=====================
+
+### 1\. Model capacity strongly affects overfitting
+
+Small model  → slower overfitting\
+Medium model → balanced performance\
+Large model  → fastest memorization
+
+Larger networks have significantly more parameters, which increases their ability to **fit complex functions**.\
+However, on small datasets this often leads to **memorization rather than generalization**.
+
+* * * * *
+
+### 2\. Larger models achieve lower training loss but worse generalization
+
+The large network quickly drives training loss close to zero.\
+However, its validation loss begins increasing after **~6 epochs**, indicating that it has started memorizing the training set.
+
+* * * * *
+
+### 3\. Moderate capacity networks generalize best
+
+The medium-sized network achieves the most balanced performance between:
+
+model capacity\
+training stability\
+generalization
+
+* * * * *
+
+### 4\. Dropout delays overfitting
+
+Adding dropout to the medium architecture slightly improves generalization by reducing reliance on individual neurons.
+
+This acts as a **regularization mechanism**, encouraging the network to learn more robust feature representations.
+
+* * * * *
+
+Key Takeaway
+============
+
+Increasing neural network capacity leads to faster memorization of the training data.
+
+While larger models achieve lower training loss, their validation performance deteriorates earlier due to overfitting.
+
+On small tabular datasets, **moderate-capacity networks combined with regularization techniques often provide the best balance between learning power and generalization.**
+
+* * * * *
+
+Repository Structure
+====================
+
+ANN-CREDIT-RISK-PREDICTION\
+│\
+├── main.py\
+├── models.py\
+├── train.py\
+├── evaluation/\
+│   └── evaluate.py\
+│\
+├── plots/\
+│   ├── training_curve_small.png\
+│   ├── training_curve_medium.png\
+│   ├── training_curve_large.png\
+│   └── model_capacity_comparison.png\
+│\
+├── requirements.txt\
+└── README.md
