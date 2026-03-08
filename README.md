@@ -1,5 +1,5 @@
 # Credit Risk Prediction using Artificial Neural Networks
-=======================================================
+=========================================================
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-DeepLearning-red)
@@ -219,23 +219,3 @@ While larger models achieve lower training loss, their validation performance de
 On small tabular datasets, **moderate-capacity networks combined with regularization techniques often provide the best balance between learning power and generalization.**
 
 * * * * *
-
-Repository Structure
-====================
-
-ANN-CREDIT-RISK-PREDICTION\
-│\
-├── main.py\
-├── models.py\
-├── train.py\
-├── evaluation/\
-│   └── evaluate.py\
-│\
-├── plots/\
-│   ├── training_curve_small.png\
-│   ├── training_curve_medium.png\
-│   ├── training_curve_large.png\
-│   └── model_capacity_comparison.png\
-│\
-├── requirements.txt\
-└── README.md
