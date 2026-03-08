@@ -1,5 +1,6 @@
-### Credit Risk Prediction using Artificial Neural Networks
+# Credit Risk Prediction using Artificial Neural Networks
 =======================================================
+
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-DeepLearning-red)
 ![License](https://img.shields.io/badge/License-MIT-green)
