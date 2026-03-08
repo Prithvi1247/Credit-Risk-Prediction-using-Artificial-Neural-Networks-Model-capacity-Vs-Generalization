@@ -1,0 +1,46 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# VSCode settings
+.vscode/
+
+# PyTorch checkpoints
+*.pt
+*.pth
+
+# Temporary files
+*.tmp
+
+# Large dataset files (optional)
+data/*.csv
+data/*.zip
+data/*.json
+
+# Matplotlib cache
+.matplotlib/
+
+# Mac metadata
+.AppleDouble
+.LSOverride
